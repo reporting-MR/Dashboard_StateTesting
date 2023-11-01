@@ -94,7 +94,7 @@ def main_dashboard():
             data = data[data['Campaign'].isna() | data['Campaign'].isin(st.session_state.selected_campaigns)]
         else:
             data = data[data['Campaign'].isin(st.session_state.selected_campaigns)]
-    st.dataframe(data)
+        st.dataframe(data)
     
     
     #### Metrics ####
