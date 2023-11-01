@@ -74,6 +74,14 @@ def main_dashboard():
         st.session_state.selected_types = selected_types
         st.session_state.selected_states = selected_states
 
+    # Start with the full dataset
+    data = st.session_state.data.copy()
+    
+    # Apply each filter in sequence
+    data = data[data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
+    data = data[data["Type"].isin(st.session_state.selected_types)]
+    data = data[data["State_Name"].isin(st.session_state.selected_states)]
+    
     data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
     data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
     data = st.session_state.data[st.session_state.data["State_Name"].isin(st.session_state.selected_states)]
