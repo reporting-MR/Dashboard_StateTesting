@@ -69,14 +69,15 @@ def main_dashboard():
         selected_states = [state for state in st.session_state.states_unique 
                             if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
     #Set up Campaign Filter
-    if 'campaign_unique' not in st.session_state:
-        st.session_state.campaigns_unique = list(st.session_state.data["Campaign_Name__Salesforce_Reports"].unique())
-        # Initialize selected states to all states
+    # Set up Campaign filter
+    if 'campaigns_unique' not in st.session_state:
+        st.session_state.campaigns_unique = [x for x in list(st.session_state.data["Campaign"].unique()) if x and not pd.isna(x)]
+        # Initialize selected campaigns to all campaigns
         st.session_state.selected_campaigns = st.session_state.campaigns_unique
-
+    
     with st.expander("Filter Campaign"):
         selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique 
-                            if st.checkbox(campaign, value=(campaign in st.session_state.selected_campaigns), key=campaign)]
+                              if st.checkbox(campaign, value=(campaign in st.session_state.selected_campaigns), key="campaign_" + str(campaign))]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
