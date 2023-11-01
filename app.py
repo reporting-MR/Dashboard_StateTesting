@@ -76,7 +76,7 @@ def main_dashboard():
 
     with st.expander("Filter Campaign"):
         selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique 
-                            if st.checkbox(campaign, value=(campaigns in st.session_state.selected_campaigns), key=campaign)]
+                            if st.checkbox(campaign, value=(campaign in st.session_state.selected_campaigns), key=campaign)]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
