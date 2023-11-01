@@ -58,13 +58,25 @@ def main_dashboard():
     
     with st.expander("Filter Type"):
         selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)]
+
+    #Set up State Filter
+    if 'states_unique' not in st.session_state:
+        st.session_state.states_unique = list(st.session_state.data["State_Name"].unique())
+        # Initialize selected states to all states
+        st.session_state.selected_states = st.session_state.states_unique
+
+    with st.expander("Filter State"):
+        selected_states = [state for state in st.session_state.states_unique 
+                            if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
+        st.session_state.selected_states = selected_states
     
     data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
     data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
+    data = st.session_state.data[st.session_state.data["State_Name"].isin(st.session_state.selected_states)]
     st.dataframe(data)
     
     
