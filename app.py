@@ -52,9 +52,8 @@ def main_dashboard():
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
     
-    filtered_data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
-    st.dataframe(filtered_data)
-    #Channel_Non_Truth
+    data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
+    st.dataframe(data)
     
     
     #### Metrics ####
