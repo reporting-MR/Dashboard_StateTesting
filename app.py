@@ -69,12 +69,12 @@ def main_dashboard():
         selected_states = [state for state in st.session_state.states_unique 
                             if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
     #Set up Campaign Filter
-    # Set up Campaign filter
     if 'campaigns_unique' not in st.session_state:
-        st.session_state.campaigns_unique = [x for x in list(st.session_state.data["Campaign"].unique()) if x and not pd.isna(x)]
+        st.session_state.campaigns_unique = [x for x in list(st.session_state.data["Campaign"].unique()) if not pd.isna(x)]
+        st.session_state.campaigns_unique.append("Null")  # Add "Null" option
         # Initialize selected campaigns to all campaigns
         st.session_state.selected_campaigns = st.session_state.campaigns_unique
-    
+
     with st.expander("Filter Campaign"):
         selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique 
                               if st.checkbox(campaign, value=(campaign in st.session_state.selected_campaigns), key="campaign_" + str(campaign))]
@@ -83,7 +83,11 @@ def main_dashboard():
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
         st.session_state.selected_states = selected_states
-        st.session_state.selected_campaigns = selected_campaigns
+        if "Null" in selected_campaigns:
+            # Include rows where "Campaign" is null if "Null" is selected in the filter
+            data = data[data['Campaign'].isna() | data['Campaign'].isin(selected_campaigns)]
+        else:
+            data = data[data['Campaign'].isin(selected_campaigns)]
     
     data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
     data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
