@@ -83,16 +83,17 @@ def main_dashboard():
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
         st.session_state.selected_states = selected_states
-        if "Null" in selected_campaigns:
+        st.session_state.selected_campaigns = selected_campaigns
+        
+        # Filter based on selected values
+        data = data[data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
+        data = data[data["Type"].isin(st.session_state.selected_types)]
+        data = data[data["State_Name"].isin(st.session_state.selected_states)]
+        if "Null" in st.session_state.selected_campaigns:
             # Include rows where "Campaign" is null if "Null" is selected in the filter
-            data = data[data['Campaign'].isna() | data['Campaign'].isin(selected_campaigns)]
+            data = data[data['Campaign'].isna() | data['Campaign'].isin(st.session_state.selected_campaigns)]
         else:
-            data = data[data['Campaign'].isin(selected_campaigns)]
-    
-    data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
-    data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
-    data = st.session_state.data[st.session_state.data["State_Name"].isin(st.session_state.selected_states)]
-    data = st.session_state.data[st.session_state.data["Campaign_Name__Salesforce_Reports"].isin(st.session_state.selected_campaigns)]
+            data = data[data['Campaign'].isin(st.session_state.selected_campaigns)]
     st.dataframe(data)
     
     
