@@ -40,52 +40,22 @@ def main_dashboard():
         query = '''SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` WHERE Date >= "2023-10-01" AND Date <= "2023-10-31"'''
         st.session_state.data = pandas.read_gbq(query, credentials=credentials)
     
+    if 'channels_unique' not in st.session_state:
+        st.session_state.channels_unique = list(st.session_state.data["Channel_Non_Truth"].unique())
+        # Initialize selected channels to all channels
+        st.session_state.selected_channels = st.session_state.channels_unique
 
+    with st.expander("Filter Channel"):
+        selected_channels = [channel for channel in st.session_state.channels_unique 
+                             if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+    
+    if st.button("Re-run"):
+        st.session_state.selected_channels = selected_channels
+    
+    filtered_data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
+    st.dataframe(filtered_data)
     #Channel_Non_Truth
-
-    # Assuming you have the following unique values lists for your filters:
-    channels_unique = list(data["Channel_Non_Truth"].unique())
-    types_unique = list(data["Type"].unique())
-    states_unique = list(data["State_Name"].unique())
-    campaigns_unique = list(data["Campaign"].unique())
     
-    # Filters
-    st.markdown("**Filters**")
-    date_range = st.date_input('Date Range', [data['Date'].min(), data['Date'].max()])
-    col02, col03, col04, col05 = st.columns(4)
-    with col02:
-        with st.expander("Filter Channel"):
-            selected_channels = [channel for channel in channels_unique if st.checkbox(channel, value=True, key=channel)]
-            if not selected_channels:  # If nothing is selected, select all
-                selected_channels = channels_unique
-    with col03:
-        with st.expander("Filter Types"):
-            selected_types = [type for type in types_unique if st.checkbox(type, value=True, key="type_" + type)]
-            if not selected_types:
-                selected_types = types_unique
-    with col04:
-        with st.expander("Filter States"):
-            selected_states = [state for state in states_unique if st.checkbox(state, value=True, key=state)]
-            if not selected_states:
-                selected_states = states_unique    
-    with col05:
-        with st.expander("Filter Campaigns"):
-            selected_campaigns = [campaign for campaign in campaigns_unique if st.checkbox(str(campaign), value=True, key=str(campaign))]
-            if not selected_campaigns:
-                selected_campaigns = campaigns_unique
-    
-    ##### Modify Data Based on Filters #####
-    data = data[data['Channel_Non_Truth'].isin(selected_channels)]
-    data = data[data['Type'].isin(selected_types)]
-    data = data[data['State_Name'].isin(selected_states)]
-    data = data[data['Campaign'].isin(selected_campaigns)]
-
-    data = data[(data['Date'] >= date_range[0]) & (data['Date'] <= date_range[1])]
-    
-    ##### Displaying the dashboard #####
-    # Collapsible data frame
-    #with st.expander("Data Preview"):
-    #    st.dataframe(data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center; color: black;'>Metrics</h2>", unsafe_allow_html=True)
