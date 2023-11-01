@@ -48,7 +48,7 @@ def main_dashboard():
 
     with st.expander("Filter Channel"):
         selected_channels = [channel for channel in st.session_state.channels_unique 
-                             if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+        if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
 
     #Set up Type filter
     if 'types_unique' not in st.session_state:
@@ -58,7 +58,7 @@ def main_dashboard():
 
     with st.expander("Filter Type"):
         selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)] 
-                             if st.checkbox(type, value=(type in st.session_state.selected_types), key=type)]
+        if st.checkbox(type, value=(type in st.session_state.selected_types), key=type)]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
