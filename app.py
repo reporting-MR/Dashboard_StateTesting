@@ -57,7 +57,7 @@ def main_dashboard():
         st.session_state.selected_types = st.session_state.types_unique
 
     with st.expander("Filter Type"):
-        selected_types = [type for type in st.session_state.types_unique 
+        selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)] 
                              if st.checkbox(type, value=(type in st.session_state.selected_types), key=type)]
     
     if st.button("Re-run"):
