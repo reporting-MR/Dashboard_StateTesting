@@ -39,7 +39,8 @@ def main_dashboard():
         client = bigquery.Client(credentials=credentials)
         query = '''SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` WHERE Date >= "2023-10-01" AND Date <= "2023-10-31"'''
         st.session_state.data = pandas.read_gbq(query, credentials=credentials)
-    
+
+    #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
         st.session_state.channels_unique = list(st.session_state.data["Channel_Non_Truth"].unique())
         # Initialize selected channels to all channels
@@ -48,11 +49,23 @@ def main_dashboard():
     with st.expander("Filter Channel"):
         selected_channels = [channel for channel in st.session_state.channels_unique 
                              if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+
+    #Set up Type filter
+    if 'types_unique' not in st.session_state:
+        st.session_state.types_unique = list(st.session_state.data["Type"].unique())
+        # Initialize selected channels to all channels
+        st.session_state.selected_types = st.session_state.types_unique
+
+    with st.expander("Filter Type"):
+        selected_types = [type for type in st.session_state.types_unique 
+                             if st.checkbox(type, value=(type in st.session_state.selected_types), key=type)]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
+        st.session_state.selected_types = selected_types
     
     data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
+    data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
     st.dataframe(data)
     
     
