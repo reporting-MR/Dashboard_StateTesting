@@ -77,6 +77,8 @@ def main_dashboard():
     data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
     data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
     data = st.session_state.data[st.session_state.data["State_Name"].isin(st.session_state.selected_states)]
+
+    st.write(data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center; color: black;'>Metrics</h2>", unsafe_allow_html=True)
