@@ -32,15 +32,14 @@ def password_protection():
 def main_dashboard():
     st.markdown("<h1 style='text-align: center; color: black;'>SunPower Overview Dash - October</h1>", unsafe_allow_html=True)
     
-    # Create API client.
-    credentials = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"]
-    )
-    client = bigquery.Client(credentials=credentials)
+    if 'data' not in st.session_state:
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = bigquery.Client(credentials=credentials)
+        query = '''SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` WHERE Date >= "2023-10-01" AND Date <= "2023-10-31"'''
+        st.session_state.data = pandas.read_gbq(query, credentials=credentials)
     
-    # Perform query.
-    query = '''SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` WHERE Date >= "2023-10-01" AND Date <= "2023-10-31"'''
-    data = pandas.read_gbq(query, credentials=credentials)
 
     #Channel_Non_Truth
 
