@@ -42,13 +42,18 @@ def main_dashboard():
 
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
-        st.session_state.channels_unique = list(st.session_state.data["Channel_Non_Truth"].unique())
+        st.session_state.channels_unique = ["All"] + list(st.session_state.data["Channel_Non_Truth"].unique())
         # Initialize selected channels to all channels
         st.session_state.selected_channels = st.session_state.channels_unique
 
     with st.expander("Filter Channel"):
-        selected_channels = [channel for channel in st.session_state.channels_unique 
-                            if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+        if "All" in st.session_state.selected_channels:
+            selected_channels = st.session_state.channels_unique
+        else:
+            selected_channels = [channel for channel in st.session_state.channels_unique 
+                                 if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+        if set(selected_channels) == set(st.session_state.channels_unique) - {"All"}:
+            selected_channels.append("All")
 
     # Set up Type filter
     if 'types_unique' not in st.session_state:
