@@ -66,8 +66,15 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.states_unique
 
     with st.expander("Filter State"):
-        selected_states = [state for state in st.session_state.states_unique 
-                            if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
+        # Toggle button
+        if st.button("Select All" if len(st.session_state.selected_states) < len(st.session_state.states_unique) else "Clear All"):
+            if len(st.session_state.selected_states) < len(st.session_state.states_unique):
+                st.session_state.selected_states = st.session_state.states_unique.copy()
+            else:
+                st.session_state.selected_states = []
+                
+        selected_states = [state for state in st.session_state.states_unique
+                           if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
     
     if st.button("Re-run"):
         st.session_state.selected_channels = selected_channels
