@@ -59,25 +59,26 @@ def main_dashboard():
     with st.expander("Filter Type"):
         selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)]
 
-    #Set up State Filter
+    # Set up State Filter
     if 'states_unique' not in st.session_state:
         st.session_state.states_unique = list(st.session_state.data["State_Name"].unique())
-        # Initialize selected states to all states
-        st.session_state.selected_states = st.session_state.states_unique
-
+        st.session_state.selected_states = st.session_state.states_unique.copy()
+        st.session_state.interim_selected_states = st.session_state.selected_states.copy()
+    
     with st.expander("Filter State"):
         # Toggle button
-        if st.button("Select All" if len(st.session_state.selected_states) < len(st.session_state.states_unique) else "Clear All"):
-            if len(st.session_state.selected_states) < len(st.session_state.states_unique):
-                st.session_state.selected_states = st.session_state.states_unique.copy()
+        if st.button("Select All" if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique) else "Clear All"):
+            if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique):
+                st.session_state.interim_selected_states = st.session_state.states_unique.copy()
             else:
-                st.session_state.selected_states = []
+                st.session_state.interim_selected_states = []
                 
         selected_states = [state for state in st.session_state.states_unique
-                           if st.checkbox(state, value=(state in st.session_state.selected_states), key=state)]
+                           if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
+
     
     if st.button("Re-run"):
-        st.session_state.selected_channels = selected_channels
+        st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_types = selected_types
         st.session_state.selected_states = selected_states
 
