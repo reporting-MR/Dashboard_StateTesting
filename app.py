@@ -52,6 +52,7 @@ def main_dashboard():
         else:
             selected_channels = [channel for channel in st.session_state.channels_unique 
                                  if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
+        
         if set(selected_channels) == set(st.session_state.channels_unique) - {"All"}:
             selected_channels.append("All")
 
