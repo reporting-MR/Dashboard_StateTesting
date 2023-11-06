@@ -81,10 +81,6 @@ def main_dashboard():
     data = data[data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
     data = data[data["Type"].isin(st.session_state.selected_types)]
     data = data[data["State_Name"].isin(st.session_state.selected_states)]
-    
-    data = st.session_state.data[st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
-    data = st.session_state.data[st.session_state.data["Type"].isin(st.session_state.selected_types)]
-    data = st.session_state.data[st.session_state.data["State_Name"].isin(st.session_state.selected_states)]
 
     st.write(data)
     
