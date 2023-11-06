@@ -63,9 +63,13 @@ def main_dashboard():
     if 'states_unique' not in st.session_state:
         st.session_state.states_unique = list(st.session_state.data["State_Name"].unique())
         st.session_state.selected_states = st.session_state.states_unique.copy()
-        st.session_state.interim_selected_states = st.session_state.selected_states.copy()
+        st.session_state.interim_selected_states = st.session_state.selected_states.copy()  # Initialize it here
     
     with st.expander("Filter State"):
+        # Ensure initialization for safety
+        if 'interim_selected_states' not in st.session_state:
+            st.session_state.interim_selected_states = st.session_state.selected_states.copy()
+        
         # Toggle button
         if st.button("Select All" if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique) else "Clear All"):
             if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique):
@@ -76,7 +80,7 @@ def main_dashboard():
         selected_states = [state for state in st.session_state.states_unique
                            if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
 
-    
+
     if st.button("Re-run"):
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_types = selected_types
