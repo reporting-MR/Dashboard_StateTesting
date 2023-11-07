@@ -46,7 +46,7 @@ def main_dashboard():
         SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` 
         WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
 
-        st.session_state.data = pandas.read_gbq(query, credentials=credentials)
+        st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
 
     # Initialize the start and end date to the last 30 days
     default_start_date = (datetime.now() - timedelta(days=30)).date()
@@ -62,7 +62,7 @@ def main_dashboard():
     
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
-        st.session_state.channels_unique = list(st.session_state.data["Channel_Non_Truth"].unique())
+        st.session_state.channels_unique = list(st.session_state.full_data["Channel_Non_Truth"].unique())
         # Initialize selected channels to all channels
         st.session_state.selected_channels = st.session_state.channels_unique
     
@@ -72,7 +72,7 @@ def main_dashboard():
 
     # Set up Type filter
     if 'types_unique' not in st.session_state:
-        st.session_state.types_unique = list(st.session_state.data["Type"].unique())
+        st.session_state.types_unique = list(st.session_state.full_data["Type"].unique())
         # Initialize selected types to all types
         st.session_state.selected_types = st.session_state.types_unique
     
@@ -81,12 +81,12 @@ def main_dashboard():
 
     # Set up State Filter
     if 'states_unique' not in st.session_state:
-        st.session_state.states_unique = list(st.session_state.data["State_Name"].unique())
+        st.session_state.states_unique = list(st.session_state.full_data["State_Name"].unique())
         st.session_state.selected_states = st.session_state.states_unique.copy()
         st.session_state.interim_selected_states = st.session_state.selected_states.copy()  # Initialize it here
 
     # Fill NaN values in 'State_Name' with a placeholder like 'Not Entered'
-    st.session_state.data['State_Name'].fillna('Not Entered', inplace=True)
+    st.session_state.full_data['State_Name'].fillna('Not Entered', inplace=True)
     
     with st.expander("Filter State"):
         # Ensure initialization for safety
@@ -108,11 +108,11 @@ def main_dashboard():
             st.session_state.interim_selected_states = selected_states
 
     # Replace null values in 'Campaign' with 'Not Entered'
-    st.session_state.data['Campaign'].fillna('Not Entered', inplace=True)
+    st.session_state.full_data['Campaign'].fillna('Not Entered', inplace=True)
     
     # Set up Campaign Filter
     if 'campaigns_unique' not in st.session_state:
-        st.session_state.campaigns_unique = list(st.session_state.data["Campaign"].unique())
+        st.session_state.campaigns_unique = list(st.session_state.full_data["Campaign"].unique())
         st.session_state.selected_campaigns = st.session_state.campaigns_unique.copy()
         st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()  # Initialize it here
 
@@ -136,6 +136,7 @@ def main_dashboard():
             st.session_state.interim_selected_campaigns = selected_campaigns
             
     if st.button("Re-run"):
+        data = st.session_state.full_data.copy()
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
