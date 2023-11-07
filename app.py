@@ -48,6 +48,20 @@ def main_dashboard():
 
         st.session_state.data = pandas.read_gbq(query, credentials=credentials)
 
+    # Initialize the start and end date to the last 30 days
+    default_start_date = (datetime.now() - timedelta(days=30)).date()
+    default_end_date = datetime.now().date()
+    
+    # Use Streamlit's date_input widget to select a range
+    start_date, end_date = st.date_input(
+        "Select date range",
+        value=(default_start_date, default_end_date),
+        min_value=one_year_ago,
+        max_value=default_end_date
+    )
+
+    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
         st.session_state.channels_unique = list(st.session_state.data["Channel_Non_Truth"].unique())
