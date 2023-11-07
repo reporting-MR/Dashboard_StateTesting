@@ -81,7 +81,7 @@ def main_dashboard():
                            if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
 
     # Fill Nulls with "None"
-    st.session_state.data['Campaign'].fillna('None', inplace=True)
+    st.session_state.data['Campaign'].fillna('Not Entered', inplace=True)
     
     # Set up Campaign Filter
     if 'campaigns_unique' not in st.session_state:
