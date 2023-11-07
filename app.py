@@ -59,8 +59,6 @@ def main_dashboard():
         min_value=one_year_ago,
         max_value=default_end_date
     )
-
-    st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
     
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
@@ -143,6 +141,7 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
+        st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
     
     # Start with the full dataset
     data = st.session_state.data.copy()
