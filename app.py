@@ -117,11 +117,13 @@ def main_dashboard():
     channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
     type_filter = data["Type"].isin(st.session_state.selected_types)
     state_filter = data["State_Name"].isin(st.session_state.selected_states)
-    campaign_filter = data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
+    #campaign_filter = data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
     
-    # Include nulls if 'Null' is selected
+    # If 'None' or 'Null' is selected, include rows where 'Campaign' is None or NaN
     if 'Null' in st.session_state.selected_campaigns:
-        campaign_filter = campaign_filter | data['Campaign'].isnull()
+        campaign_filter = data['Campaign'].isnull() | data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
+    else:
+        campaign_filter = data['Campaign'].isin(st.session_state.selected_campaigns)
     
     # Apply all filters at once
     data = data[channel_filter & type_filter & state_filter & campaign_filter]
