@@ -53,12 +53,11 @@ def main_dashboard():
     default_end_date = datetime.now().date()
     
     # Use Streamlit's date_input widget to select a range
-    with st.expander("Select Date Range"):
-        st.session_state.interim_start_date, st.session_state.interim_end_date = st.date_input(
-            "Select date range",
-            value=(default_start_date, default_end_date),
-            min_value=one_year_ago,
-            max_value=default_end_date
+    start_date, end_date = st.date_input(
+        "Select date range",
+        value=(default_start_date, default_end_date),
+        min_value=one_year_ago,
+        max_value=default_end_date
     )
     
     #Set up Channel Filter
@@ -142,31 +141,19 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-
-        # Here, we update the actual selected start and end date
-        st.session_state.selected_start_date = st.session_state.interim_start_date
-        st.session_state.selected_end_date = st.session_state.interim_end_date
+        st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
     
-        # Apply the date filter by updating the data in session_state
-        st.session_state.data = st.session_state.data[
-            (st.session_state.data['Date'] >= st.session_state.selected_start_date) &
-            (st.session_state.data['Date'] <= st.session_state.selected_end_date)
-        ]
+    # Start with the full dataset
+    data = st.session_state.data.copy()
     
-        # Then apply the other filters
-        st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
-        st.session_state.selected_states = st.session_state.interim_selected_states.copy()
-        st.session_state.selected_channels = selected_channels
-        st.session_state.selected_types = selected_types
+   # Define the filters
+    channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
+    type_filter = data["Type"].isin(st.session_state.selected_types)
+    state_filter = data["State_Name"].isin(st.session_state.selected_states)
+    campaign_filter = data["Campaign"].isin(st.session_state.selected_campaigns)
     
-        # Apply all filters to the data
-        channel_filter = st.session_state.data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
-        type_filter = st.session_state.data["Type"].isin(st.session_state.selected_types)
-        state_filter = st.session_state.data["State_Name"].isin(st.session_state.selected_states)
-        campaign_filter = st.session_state.data["Campaign"].isin(st.session_state.selected_campaigns)
-        
-        # Apply all filters at once
-        st.session_state.data = st.session_state.data[channel_filter & type_filter & state_filter & campaign_filter]
+    # Apply all filters at once
+    data = data[channel_filter & type_filter & state_filter & campaign_filter]
 
     st.write(st.session_state.data)
     
