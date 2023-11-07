@@ -105,9 +105,13 @@ def main_dashboard():
             else:
                 st.session_state.interim_selected_campaigns = []
                 
-        selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique
-                      if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key="campaign_" + str(campaign))]
-    
+        selected_campaigns = []
+        for campaign in st.session_state.campaigns_unique:
+            if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns)):
+                selected_campaigns.append(campaign)
+        if selected_campaigns:
+            st.session_state.interim_selected_campaigns = selected_campaigns
+            
   
     if st.button("Re-run"):
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
