@@ -53,11 +53,12 @@ def main_dashboard():
     default_end_date = datetime.now().date()
     
     # Use Streamlit's date_input widget to select a range
-    start_date, end_date = st.date_input(
-        "Select date range",
-        value=(default_start_date, default_end_date),
-        min_value=one_year_ago,
-        max_value=default_end_date
+    with st.expander("Select Date Range"):
+        st.session_state.interim_start_date, st.session_state.interim_end_date = st.date_input(
+            "Select date range",
+            value=(default_start_date, default_end_date),
+            min_value=one_year_ago,
+            max_value=default_end_date
     )
     
     #Set up Channel Filter
@@ -141,7 +142,16 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-        st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
+
+        # Here, we update the actual selected start and end date
+        st.session_state.selected_start_date = st.session_state.interim_start_date
+        st.session_state.selected_end_date = st.session_state.interim_end_date
+    
+        # Apply the date filter by updating the data in session_state
+        st.session_state.data = st.session_state.data[
+            (st.session_state.data['Date'] >= st.session_state.selected_start_date) &
+            (st.session_state.data['Date'] <= st.session_state.selected_end_date)
+        ]
     
     # Start with the full dataset
     data = st.session_state.data.copy()
