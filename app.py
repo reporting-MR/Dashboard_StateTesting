@@ -80,35 +80,36 @@ def main_dashboard():
         selected_states = [state for state in st.session_state.states_unique
                            if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
 
-        # Set up Campaign Filter
+    # Fill Nulls with "None"
+    st.session_state.data['Campaign'].fillna('None', inplace=True)
+    
+    # Set up Campaign Filter
     if 'campaigns_unique' not in st.session_state:
-        # Replace actual null values with a string representation for the UI
-        st.session_state.campaigns_unique = ['Null'] + [x for x in list(st.session_state.data["Campaign"].unique()) if pd.notnull(x)]
+        st.session_state.campaigns_unique = list(st.session_state.data["Campaign"].unique())
         st.session_state.selected_campaigns = st.session_state.campaigns_unique.copy()
         st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()  # Initialize it here
-    
+
     with st.expander("Filter Campaign"):
         # Ensure initialization for safety
         if 'interim_selected_campaigns' not in st.session_state:
             st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()
         
         # Toggle button
-        if st.button("Select All Campaigns" if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique) else "Clear All Campaigns"):
+        if st.button("Select All" if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique) else "Clear All"):
             if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique):
                 st.session_state.interim_selected_campaigns = st.session_state.campaigns_unique.copy()
             else:
                 st.session_state.interim_selected_campaigns = []
-    
+                
         selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique
-                              if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key="campaign_" + campaign)]
-
-
+                           if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key=campaign)]
+    
+  
     if st.button("Re-run"):
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-        #st.session_state.selected_states = selected_states
     
     # Start with the full dataset
     data = st.session_state.data.copy()
@@ -117,13 +118,7 @@ def main_dashboard():
     channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
     type_filter = data["Type"].isin(st.session_state.selected_types)
     state_filter = data["State_Name"].isin(st.session_state.selected_states)
-    #campaign_filter = data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
-    
-    # If 'None' or 'Null' is selected, include rows where 'Campaign' is None or NaN
-    if 'Null' in st.session_state.selected_campaigns:
-        campaign_filter = data['Campaign'].isnull() | data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
-    else:
-        campaign_filter = data['Campaign'].isin(st.session_state.selected_campaigns)
+    campaign_filter = data["Campaign"].isin(st.session_state.selected_campaigns)
     
     # Apply all filters at once
     data = data[channel_filter & type_filter & state_filter & campaign_filter]
