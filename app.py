@@ -112,16 +112,19 @@ def main_dashboard():
     # Start with the full dataset
     data = st.session_state.data.copy()
     
-    # Apply each filter in sequence
-    data = data[data["Channel_Non_Truth"].isin(st.session_state.selected_channels)]
-    data = data[data["Type"].isin(st.session_state.selected_types)]
-    data = data[data["State_Name"].isin(st.session_state.selected_states)]
-    if 'Null' in st.session_state.selected_campaigns:
-        data = data[data['Campaign'].isnull() | data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])]
-    else:
-        data = data[data['Campaign'].isin(st.session_state.selected_campaigns)]
-
+   # Define the filters
+    channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
+    type_filter = data["Type"].isin(st.session_state.selected_types)
+    state_filter = data["State_Name"].isin(st.session_state.selected_states)
+    campaign_filter = data['Campaign'].isin([x for x in st.session_state.selected_campaigns if x != 'Null'])
     
+    # Include nulls if 'Null' is selected
+    if 'Null' in st.session_state.selected_campaigns:
+        campaign_filter = campaign_filter | data['Campaign'].isnull()
+    
+    # Apply all filters at once
+    data = data[channel_filter & type_filter & state_filter & campaign_filter]
+
     st.write(data)
     
     #### Metrics ####
