@@ -155,7 +155,7 @@ def main_dashboard():
     # Apply all filters at once
     data = data[channel_filter & type_filter & state_filter & campaign_filter]
 
-    st.write(st.session_state.data)
+    st.write(data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center;'>Metrics</h2>", unsafe_allow_html=True)
