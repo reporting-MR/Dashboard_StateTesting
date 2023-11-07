@@ -60,7 +60,7 @@ def main_dashboard():
         max_value=default_end_date
     )
 
-    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
     
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
