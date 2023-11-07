@@ -71,7 +71,7 @@ def main_dashboard():
             st.session_state.interim_selected_states = st.session_state.selected_states.copy()
         
         # Toggle button
-        if st.button("Select All" if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique) else "Clear All"):
+        if st.button("Select All States" if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique) else "Clear All States", key = "select_clear_states"):
             if len(st.session_state.interim_selected_states) < len(st.session_state.states_unique):
                 st.session_state.interim_selected_states = st.session_state.states_unique.copy()
             else:
@@ -95,7 +95,7 @@ def main_dashboard():
             st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()
         
         # Toggle button
-        if st.button("Select All" if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique) else "Clear All"):
+        if st.button("Select All Campaigns" if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique) else "Clear All Campaigns", key = "select_clear_campaigns"):
             if len(st.session_state.interim_selected_campaigns) < len(st.session_state.campaigns_unique):
                 st.session_state.interim_selected_campaigns = st.session_state.campaigns_unique.copy()
             else:
