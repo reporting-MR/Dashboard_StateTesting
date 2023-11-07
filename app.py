@@ -135,7 +135,6 @@ def main_dashboard():
         if selected_campaigns:
             st.session_state.interim_selected_campaigns = selected_campaigns
             
-  
     if st.button("Re-run"):
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
@@ -158,7 +157,7 @@ def main_dashboard():
     st.write(st.session_state.data)
     
     #### Metrics ####
-    st.markdown("<h2 style='text-align: center; color: black;'>Metrics</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>Metrics</h2>", unsafe_allow_html=True)
     #st.subheader("Metrics")
     
     # Number of Impressions, Clicks, and Conversions
