@@ -77,8 +77,12 @@ def main_dashboard():
             else:
                 st.session_state.interim_selected_states = []
                 
-        selected_states = [state for state in st.session_state.states_unique
-                           if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
+        selected_states = []
+        for state in st.session_state.states_unique:
+            if st.checkbox(state, value=(state in st.session_state.interim_selected_states)):
+                selected_states.append(state)
+        if selected_states:
+            st.session_state.interim_selected_states = selected_states
 
     # Replace null values in 'Campaign' with 'Not Entered'
     st.session_state.data['Campaign'].fillna('Not Entered', inplace=True)
