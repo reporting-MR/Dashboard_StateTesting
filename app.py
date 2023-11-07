@@ -72,6 +72,9 @@ def main_dashboard():
         st.session_state.states_unique = list(st.session_state.data["State_Name"].unique())
         st.session_state.selected_states = st.session_state.states_unique.copy()
         st.session_state.interim_selected_states = st.session_state.selected_states.copy()  # Initialize it here
+
+    # Fill NaN values in 'State_Name' with a placeholder like 'Not Entered'
+    st.session_state.data['State_Name'].fillna('Not Entered', inplace=True)
     
     with st.expander("Filter State"):
         # Ensure initialization for safety
