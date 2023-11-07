@@ -9,6 +9,7 @@ from google.cloud import bigquery
 import statsmodels.api as sm
 from plotly.subplots import make_subplots
 from prophet import Prophet
+from datetime import datetime, timedelta
 
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
 
@@ -31,13 +32,20 @@ def password_protection():
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center; color: black;'>SunPower Overview Dash - October</h1>", unsafe_allow_html=True)
+
+    # Calculate the date one year ago from today
+    one_year_ago = (datetime.now() - timedelta(days=365)).date()
     
     if 'data' not in st.session_state:
         credentials = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"]
         )
         client = bigquery.Client(credentials=credentials)
-        query = '''SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` WHERE Date >= "2023-10-01" AND Date <= "2023-10-31"'''
+        # Modify the query
+        query = f"""
+        SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` 
+        WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
+
         st.session_state.data = pandas.read_gbq(query, credentials=credentials)
 
     #Set up Channel Filter
