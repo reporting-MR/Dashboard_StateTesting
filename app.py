@@ -144,7 +144,7 @@ def main_dashboard():
         st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
     
     # Start with the full dataset
-    data = st.session_state.data.copy()
+    data = st.session_state.full_data.copy()
     
    # Define the filters
     channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
