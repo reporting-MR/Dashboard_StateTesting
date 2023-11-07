@@ -80,7 +80,7 @@ def main_dashboard():
         selected_states = [state for state in st.session_state.states_unique
                            if st.checkbox(state, value=(state in st.session_state.interim_selected_states), key=state)]
 
-    # Fill Nulls with "None"
+    # Replace null values in 'Campaign' with 'Not Entered'
     st.session_state.data['Campaign'].fillna('Not Entered', inplace=True)
     
     # Set up Campaign Filter
@@ -102,7 +102,7 @@ def main_dashboard():
                 st.session_state.interim_selected_campaigns = []
                 
         selected_campaigns = [campaign for campaign in st.session_state.campaigns_unique
-                           if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key=campaign)]
+                      if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key="campaign_" + str(campaign))]
     
   
     if st.button("Re-run"):
