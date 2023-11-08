@@ -141,7 +141,7 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    
     
     # Start with the full dataset
     data = st.session_state.full_data.copy()
@@ -151,6 +151,8 @@ def main_dashboard():
     type_filter = data["Type"].isin(st.session_state.selected_types)
     state_filter = data["State_Name"].isin(st.session_state.selected_states)
     campaign_filter = data["Campaign"].isin(st.session_state.selected_campaigns)
+    
+    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
     
     # Apply all filters at once
     data = data[channel_filter & type_filter & state_filter & campaign_filter]
