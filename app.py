@@ -130,13 +130,12 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-        st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
-        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
 
     # Start with the full dataset
     data = st.session_state.full_data.copy()
     
    # Define the filters
+    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
     channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
     type_filter = data["Type"].isin(st.session_state.selected_types)
     state_filter = data["State_Name"].isin(st.session_state.selected_states)
