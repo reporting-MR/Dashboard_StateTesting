@@ -47,6 +47,7 @@ def main_dashboard():
         WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
 
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
+        data = st.session_state.full_data
 
     # Initialize the start and end date to the last 30 days
     default_start_date = (datetime.now() - timedelta(days=30)).date()
@@ -134,9 +135,6 @@ def main_dashboard():
                 selected_campaigns.append(campaign)
         if selected_campaigns:
             st.session_state.interim_selected_campaigns = selected_campaigns
-
-    # Start with the full dataset
-    data = st.session_state.full_data.copy()
     
     if st.button("Re-run"):
         data = st.session_state.full_data.copy()
