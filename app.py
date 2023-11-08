@@ -47,7 +47,6 @@ def main_dashboard():
         WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
 
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
-        data = st.session_state.full_data
 
     # Initialize the start and end date to the last 30 days
     default_start_date = (datetime.now() - timedelta(days=30)).date()
@@ -137,24 +136,34 @@ def main_dashboard():
             st.session_state.interim_selected_campaigns = selected_campaigns
     
     if st.button("Re-run"):
-        data = st.session_state.full_data.copy()
+        # Create a copy of the full_data to apply filters
+        filtered_data = st.session_state.full_data.copy()
+    
+        # Ensure the 'Date' column is in datetime format
+        filtered_data['Date'] = pandas.to_datetime(filtered_data['Date'])
+    
+        # Apply the date filter first
+        filtered_data = filtered_data[(filtered_data['Date'] >= start_date) & (filtered_data['Date'] <= end_date)]
+    
+        # Update session state selected filters based on user input
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
+    
+        # Define the filters based on updated session state
+        channel_filter = filtered_data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
+        type_filter = filtered_data["Type"].isin(st.session_state.selected_types)
+        state_filter = filtered_data["State_Name"].isin(st.session_state.selected_states)
+        campaign_filter = filtered_data["Campaign"].isin(st.session_state.selected_campaigns)
         
-        # Define the filters
-        channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
-        type_filter = data["Type"].isin(st.session_state.selected_types)
-        state_filter = data["State_Name"].isin(st.session_state.selected_states)
-        campaign_filter = data["Campaign"].isin(st.session_state.selected_campaigns)
-        
-        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
-        
-        # Apply all filters at once
-        data = data[channel_filter & type_filter & state_filter & campaign_filter]
+        # Apply all filters at once to the filtered_data
+        filtered_data = filtered_data[channel_filter & type_filter & state_filter & campaign_filter]
+    
+        # Store the filtered data in session state for display
+        st.session_state.data = filtered_data
 
-    st.write(data)
+    st.write(st.session_state.data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center;'>Metrics</h2>", unsafe_allow_html=True)
