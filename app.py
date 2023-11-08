@@ -10,9 +10,7 @@ import statsmodels.api as sm
 from plotly.subplots import make_subplots
 from prophet import Prophet
 from datetime import datetime, timedelta
-
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
-
 def password_protection():
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -29,10 +27,8 @@ def password_protection():
                 st.error("Incorrect Password. Please try again or contact the administrator.")
     else:
         main_dashboard()
-
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>SunPower Overview Dash - October</h1>", unsafe_allow_html=True)
-
     # Calculate the date one year ago from today
     one_year_ago = (datetime.now() - timedelta(days=60)).date()
     
@@ -45,9 +41,7 @@ def main_dashboard():
         query = f"""
         SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` 
         WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
-
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
-
     # Initialize the start and end date to the last 30 days
     default_start_date = (datetime.now() - timedelta(days=30)).date()
     default_end_date = datetime.now().date()
@@ -69,7 +63,6 @@ def main_dashboard():
     with st.expander("Filter Channel"):
         selected_channels = [channel for channel in st.session_state.channels_unique 
                             if st.checkbox(channel, value=(channel in st.session_state.selected_channels), key=channel)]
-
     # Set up Type filter
     if 'types_unique' not in st.session_state:
         st.session_state.types_unique = list(st.session_state.full_data["Type"].unique())
@@ -78,13 +71,11 @@ def main_dashboard():
     
     with st.expander("Filter Type"):
         selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)]
-
     # Set up State Filter
     if 'states_unique' not in st.session_state:
         st.session_state.states_unique = list(st.session_state.full_data["State_Name"].unique())
         st.session_state.selected_states = st.session_state.states_unique.copy()
         st.session_state.interim_selected_states = st.session_state.selected_states.copy()  # Initialize it here
-
     # Fill NaN values in 'State_Name' with a placeholder like 'Not Entered'
     st.session_state.full_data['State_Name'].fillna('Not Entered', inplace=True)
     
@@ -106,7 +97,6 @@ def main_dashboard():
                 selected_states.append(state)
         if selected_states:
             st.session_state.interim_selected_states = selected_states
-
     # Replace null values in 'Campaign' with 'Not Entered'
     st.session_state.full_data['Campaign'].fillna('Not Entered', inplace=True)
     
@@ -115,7 +105,6 @@ def main_dashboard():
         st.session_state.campaigns_unique = list(st.session_state.full_data["Campaign"].unique())
         st.session_state.selected_campaigns = st.session_state.campaigns_unique.copy()
         st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()  # Initialize it here
-
     with st.expander("Filter Campaign"):
         # Ensure initialization for safety
         if 'interim_selected_campaigns' not in st.session_state:
@@ -134,35 +123,27 @@ def main_dashboard():
                 selected_campaigns.append(campaign)
         if selected_campaigns:
             st.session_state.interim_selected_campaigns = selected_campaigns
-    
+            
     if st.button("Re-run"):
-        # Create a copy of the full_data to apply filters
-        filtered_data = st.session_state.full_data.copy()
-    
-        # Ensure the 'Date' column is in datetime format
-        filtered_data['Date'] = pandas.to_datetime(filtered_data['Date'])
-    
-        # Apply the date filter first
-        filtered_data = filtered_data[(filtered_data['Date'] >= start_date) & (filtered_data['Date'] <= end_date)]
-    
-        # Update session state selected filters based on user input
+        data = st.session_state.full_data.copy()
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-    
-        # Define the filters based on updated session state
-        channel_filter = filtered_data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
-        type_filter = filtered_data["Type"].isin(st.session_state.selected_types)
-        state_filter = filtered_data["State_Name"].isin(st.session_state.selected_states)
-        campaign_filter = filtered_data["Campaign"].isin(st.session_state.selected_campaigns)
-        
-    # Apply all filters at once to the filtered_data
-    filtered_data = filtered_data[channel_filter & type_filter & state_filter & campaign_filter]
-    
-    # Store the filtered data in session state for display
-    data = filtered_data
+        st.session_state.data = st.session_state.data[(st.session_state.data['Date'] >= start_date) & (st.session_state.data['Date'] <= end_date)]
+        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
 
+    # Start with the full dataset
+    data = st.session_state.full_data.copy()
+    
+   # Define the filters
+    channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
+    type_filter = data["Type"].isin(st.session_state.selected_types)
+    state_filter = data["State_Name"].isin(st.session_state.selected_states)
+    campaign_filter = data["Campaign"].isin(st.session_state.selected_campaigns)
+    
+    # Apply all filters at once
+    data = data[channel_filter & type_filter & state_filter & campaign_filter]
     st.write(data)
     
     #### Metrics ####
@@ -287,7 +268,6 @@ def main_dashboard():
     
     ### Bottom Charts ###
     bottom_left_column, bottom_right_column = st.columns(2)
-
     state_abbreviations = {
     'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
     'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
@@ -299,10 +279,8 @@ def main_dashboard():
     'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
     'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
     'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'}
-
     # Convert full state names in your dataframe to abbreviations
     data['State_Abbreviation'] = data['State_Name'].map(state_abbreviations)
-
     aggregated_data = data.groupby('State_Abbreviation').agg({'Appts': 'sum'}).reset_index()
         
     with bottom_left_column:
@@ -315,7 +293,6 @@ def main_dashboard():
                         title='Appts by State',
                         color_continuous_scale='Viridis',
                         labels={'Appts':'Appts'})
-
         st.plotly_chart(fig_map, use_container_width=True)
     
     with bottom_right_column:
