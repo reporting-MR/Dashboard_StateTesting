@@ -157,13 +157,13 @@ def main_dashboard():
         state_filter = filtered_data["State_Name"].isin(st.session_state.selected_states)
         campaign_filter = filtered_data["Campaign"].isin(st.session_state.selected_campaigns)
         
-        # Apply all filters at once to the filtered_data
-        filtered_data = filtered_data[channel_filter & type_filter & state_filter & campaign_filter]
+    # Apply all filters at once to the filtered_data
+    filtered_data = filtered_data[channel_filter & type_filter & state_filter & campaign_filter]
     
-        # Store the filtered data in session state for display
-        st.session_state.data = filtered_data
+    # Store the filtered data in session state for display
+    data = filtered_data
 
-    st.write(st.session_state.data)
+    st.write(data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center;'>Metrics</h2>", unsafe_allow_html=True)
