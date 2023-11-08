@@ -134,19 +134,18 @@ def main_dashboard():
                 selected_campaigns.append(campaign)
         if selected_campaigns:
             st.session_state.interim_selected_campaigns = selected_campaigns
-            
+
+    # Start with the full dataset
+    data = st.session_state.full_data.copy()
+    
     if st.button("Re-run"):
         data = st.session_state.full_data.copy()
         st.session_state.selected_campaigns = st.session_state.interim_selected_campaigns.copy()
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
-    
-    
-        # Start with the full dataset
-        data = st.session_state.full_data.copy()
         
-       # Define the filters
+        # Define the filters
         channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
         type_filter = data["Type"].isin(st.session_state.selected_types)
         state_filter = data["State_Name"].isin(st.session_state.selected_states)
