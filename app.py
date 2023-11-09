@@ -30,7 +30,7 @@ def password_protection():
         main_dashboard()
 
 def main_dashboard():
-    st.markdown("<h1 style='text-align: center;'>SunPower Overview Dash - October</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>SunPower Overview Dash</h1>", unsafe_allow_html=True)
     # Calculate the date one year ago from today
     one_year_ago = (datetime.now() - timedelta(days=365)).date()
     
