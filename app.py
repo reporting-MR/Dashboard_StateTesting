@@ -138,8 +138,9 @@ def main_dashboard():
                 st.session_state.interim_selected_campaigns = []
                 
         selected_campaigns = []
-        for campaign in st.session_state.campaigns_unique:
-            if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns)):
+        for index, campaign in enumerate(st.session_state.campaigns_unique):
+            # Use the index to generate a unique key for each checkbox
+            if st.checkbox(campaign, value=(campaign in st.session_state.interim_selected_campaigns), key=f"campaign_{index}"):
                 selected_campaigns.append(campaign)
         if selected_campaigns:
             st.session_state.interim_selected_campaigns = selected_campaigns
