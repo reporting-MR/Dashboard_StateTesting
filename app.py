@@ -87,13 +87,15 @@ def main_dashboard():
     
     with st.expander("Filter Type"):
         selected_types = [typ for typ in st.session_state.types_unique if st.checkbox(typ, value=(typ in st.session_state.selected_types), key="type_" + typ)]
+
+    # Fill NaN values in 'State_Name' with a placeholder like 'Not Entered'
+    st.session_state.full_data['State_Name'].fillna('Not Entered', inplace=True)
+    
     # Set up State Filter
     if 'states_unique' not in st.session_state:
         st.session_state.states_unique = list(st.session_state.full_data["State_Name"].unique())
         st.session_state.selected_states = st.session_state.states_unique.copy()
         st.session_state.interim_selected_states = st.session_state.selected_states.copy()  # Initialize it here
-    # Fill NaN values in 'State_Name' with a placeholder like 'Not Entered'
-    st.session_state.full_data['State_Name'].fillna('Not Entered', inplace=True)
     
     with st.expander("Filter State"):
         # Ensure initialization for safety
@@ -113,6 +115,7 @@ def main_dashboard():
                 selected_states.append(state)
         if selected_states:
             st.session_state.interim_selected_states = selected_states
+
     # Replace null values in 'Campaign' with 'Not Entered'
     st.session_state.full_data['Campaign'].fillna('Not Entered', inplace=True)
     
