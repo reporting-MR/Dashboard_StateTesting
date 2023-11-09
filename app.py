@@ -15,13 +15,14 @@ st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",l
 login_placeholder = st.empty()
 
 def password_protection(login_placeholder):
+    password = st.text_input("Enter Password:", type="password")
+    
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
 
     # Display the password input only if the user is not authenticated
     if not st.session_state.authenticated:
         with login_placeholder:  # Display inside the placeholder
-            password = st.text_input("Enter Password:", type="password")
             if st.button("Login"):
                 if password == correct_hashed_password:
                     st.session_state.authenticated = True
