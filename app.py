@@ -13,26 +13,24 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
 
 def password_protection():
+    login_placeholder = st.empty()  # Create a placeholder for the login
+
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
-        
+
     if not st.session_state.authenticated:
-        # Create a placeholder for the login form
-        login_placeholder = st.empty()
-        
-        with login_placeholder.container():
+        with login_placeholder:  # Use the placeholder
             password = st.text_input("Enter Password:", type="password")
             if st.button("Login"):
-                correct_hashed_password = "Sunpower1234"
                 if password == correct_hashed_password:
                     st.session_state.authenticated = True
-                    # Clear the login form from the screen
-                    login_placeholder.empty()
+                    login_placeholder.empty()  # Clear the placeholder
                     main_dashboard()  # Call the main dashboard function
                 else:
                     st.error("Incorrect Password. Please try again or contact the administrator.")
     else:
-        main_dashboard()
+        login_placeholder.empty()  # This will ensure the login is cleared if the user is already authenticated
+        main_dashboard()  # Call the main dashboard function
 
 
 def main_dashboard():
