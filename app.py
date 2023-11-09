@@ -12,25 +12,25 @@ from prophet import Prophet
 from datetime import datetime, timedelta
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
 
-def password_protection():
-    login_placeholder = st.empty()  # Create a placeholder for the login
+login_placeholder = st.empty()
 
+def password_protection(login_placeholder):
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
 
+    # Display the password input only if the user is not authenticated
     if not st.session_state.authenticated:
-        with login_placeholder:  # Use the placeholder
+        with login_placeholder:  # Display inside the placeholder
             password = st.text_input("Enter Password:", type="password")
             if st.button("Login"):
                 if password == correct_hashed_password:
                     st.session_state.authenticated = True
                     login_placeholder.empty()  # Clear the placeholder
-                    main_dashboard()  # Call the main dashboard function
+                    main_dashboard()
                 else:
                     st.error("Incorrect Password. Please try again or contact the administrator.")
     else:
-        login_placeholder.empty()  # This will ensure the login is cleared if the user is already authenticated
-        main_dashboard()  # Call the main dashboard function
+        main_dashboard()
 
 
 def main_dashboard():
@@ -326,4 +326,4 @@ def main_dashboard():
         st.plotly_chart(fig_scatter, use_container_width=True)   
     
 if __name__ == '__main__':
-    password_protection()
+    password_protection(login_placeholder)
