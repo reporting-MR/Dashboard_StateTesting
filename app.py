@@ -12,7 +12,6 @@ from prophet import Prophet
 from datetime import datetime, timedelta
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
 
-
 def password_protection():
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -29,6 +28,8 @@ def password_protection():
                 st.error("Incorrect Password. Please try again or contact the administrator.")
     else:
         main_dashboard()
+
+
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>SunPower Overview Dash - October</h1>", unsafe_allow_html=True)
     # Calculate the date one year ago from today
@@ -47,7 +48,6 @@ def main_dashboard():
 
     
     # Initialize the start and end date to the last 30 days
-    # Initialize the start and end date to the last 30 days if they're not in session state
     if 'start_date' not in st.session_state:
         st.session_state['start_date'] = (datetime.now() - timedelta(days=30)).date()
     
@@ -167,7 +167,6 @@ def main_dashboard():
     
     # Apply all filters at once
     data = data[channel_filter & type_filter & state_filter & campaign_filter]
-    st.write(data)
     
     #### Metrics ####
     st.markdown("<h2 style='text-align: center;'>Metrics</h2>", unsafe_allow_html=True)
