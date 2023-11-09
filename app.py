@@ -11,6 +11,8 @@ from plotly.subplots import make_subplots
 from prophet import Prophet
 from datetime import datetime, timedelta
 st.set_page_config(page_title="SunPower Overview Dash",page_icon="🧑‍🚀",layout="wide")
+
+
 def password_protection():
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -42,18 +44,32 @@ def main_dashboard():
         SELECT * FROM `sunpower-375201.sunpower_agg.sunpower_full_funnel` 
         WHERE Date BETWEEN '{one_year_ago}' AND CURRENT_DATE() """
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
+
+    
     # Initialize the start and end date to the last 30 days
-    default_start_date = (datetime.now() - timedelta(days=30)).date()
-    default_end_date = datetime.now().date()
+    # Initialize the start and end date to the last 30 days if they're not in session state
+    if 'start_date' not in st.session_state:
+        st.session_state['start_date'] = (datetime.now() - timedelta(days=30)).date()
     
-    # Use Streamlit's date_input widget to select a range
-    start_date, end_date = st.date_input(
-        "Select date range",
-        value=(default_start_date, default_end_date),
+    if 'end_date' not in st.session_state:
+        st.session_state['end_date'] = datetime.now().date()
+    
+    #Select the start and end dates independently
+    start_date = st.date_input(
+        "Select start date",
+        value=st.session_state['start_date'],
         min_value=one_year_ago,
-        max_value=default_end_date
+        max_value=st.session_state['end_date']  # Ensure start date is not after end date
     )
-    
+
+    end_date = st.date_input(
+        "Select end date",
+        value=st.session_state['end_date'],
+        min_value=start_date,  # Ensure end date is not before start date
+        max_value=datetime.now().date()
+    )
+
+
     #Set up Channel Filter
     if 'channels_unique' not in st.session_state:
         st.session_state.channels_unique = list(st.session_state.full_data["Channel_Non_Truth"].unique())
@@ -105,6 +121,7 @@ def main_dashboard():
         st.session_state.campaigns_unique = list(st.session_state.full_data["Campaign"].unique())
         st.session_state.selected_campaigns = st.session_state.campaigns_unique.copy()
         st.session_state.interim_selected_campaigns = st.session_state.selected_campaigns.copy()  # Initialize it here
+        
     with st.expander("Filter Campaign"):
         # Ensure initialization for safety
         if 'interim_selected_campaigns' not in st.session_state:
@@ -130,12 +147,15 @@ def main_dashboard():
         st.session_state.selected_states = st.session_state.interim_selected_states.copy()
         st.session_state.selected_channels = selected_channels
         st.session_state.selected_types = selected_types
+        st.session_state['start_date'] = start_date
+        st.session_state['end_date'] = end_date
+    
 
     # Start with the full dataset
     data = st.session_state.full_data.copy()
     
    # Define the filters
-    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    data = data[(data['Date'] >= st.session_state['start_date']) & (data['Date'] <= st.session_state['end_date'])]
     channel_filter = data["Channel_Non_Truth"].isin(st.session_state.selected_channels)
     type_filter = data["Type"].isin(st.session_state.selected_types)
     state_filter = data["State_Name"].isin(st.session_state.selected_states)
