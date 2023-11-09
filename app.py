@@ -17,15 +17,20 @@ def password_protection():
         st.session_state.authenticated = False
         
     if not st.session_state.authenticated:
-        password = st.text_input("Enter Password:", type="password")
-        correct_hashed_password = "Sunpower1234"
+        # Create a placeholder for the login form
+        login_placeholder = st.empty()
         
-        if st.button("Login"):
-            if password == correct_hashed_password:
-                st.session_state.authenticated = True
-                main_dashboard()
-            else:
-                st.error("Incorrect Password. Please try again or contact the administrator.")
+        with login_placeholder.container():
+            password = st.text_input("Enter Password:", type="password")
+            if st.button("Login"):
+                correct_hashed_password = "Sunpower1234"
+                if password == correct_hashed_password:
+                    st.session_state.authenticated = True
+                    # Clear the login form from the screen
+                    login_placeholder.empty()
+                    main_dashboard()  # Call the main dashboard function
+                else:
+                    st.error("Incorrect Password. Please try again or contact the administrator.")
     else:
         main_dashboard()
 
