@@ -292,8 +292,7 @@ def main_dashboard():
     options = ["Appointments", "Leads", "DQ", "Cost"]
     
     with col7:
-        with st.expander("Change Metric"):
-            selection = st.selectbox("Select a metric:", options)
+        selection = st.selectbox("Select a metric:", options)
 
     if selection == 'Appointments':
         selection = 'Appts'
