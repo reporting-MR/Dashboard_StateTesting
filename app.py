@@ -328,9 +328,9 @@ def main_dashboard():
                         locationmode='USA-states', 
                         color= selection, 
                         scope='usa', 
-                        title='Appts by State',
+                        title= f'{selection} by State',
                         color_continuous_scale='Viridis',
-                        labels={'Appts':'Appts'})
+                        labels={selection:selection})
         st.plotly_chart(fig_map, use_container_width=True)
     
     with bottom_right_column:
