@@ -319,7 +319,7 @@ def main_dashboard():
     'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'}
     # Convert full state names in your dataframe to abbreviations
     data['State_Abbreviation'] = data['State_Name'].map(state_abbreviations)
-    aggregated_data = data.groupby('State_Abbreviation').agg({'Appts': 'sum'}).reset_index()
+    aggregated_data = data.groupby('State_Abbreviation').agg({col: 'sum' for col in data.columns if pd.api.types.is_numeric_dtype(data[col])}).reset_index()
     
     with bottom_left_column:
         #Map showing leads by state
