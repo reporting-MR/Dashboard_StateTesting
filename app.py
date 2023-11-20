@@ -289,16 +289,10 @@ def main_dashboard():
     ## Metric Selector for charts
     col7, col8 = st.columns(2)
     selection = 'Appts'
-    options = ["Appointments", "Leads", "DQ", "Cost"]
+    options = ["Appointments", "Leads", "DQ", "Cost", "CPL", "CPA"]
     
     with col7:
         selection = st.selectbox("Select a metric:", options)
-
-    if selection == 'Appointments':
-        selection = 'Appts'
-
-    if selection == 'Leads':
-        selection = 'Number_of_reports__Salesforce_Reports'
 
     with col8:
         st.write("")
@@ -320,6 +314,10 @@ def main_dashboard():
     # Convert full state names in your dataframe to abbreviations
     data['State_Abbreviation'] = data['State_Name'].map(state_abbreviations)
     aggregated_data = data.groupby('State_Abbreviation').agg({col: 'sum' for col in data.columns if pd.api.types.is_numeric_dtype(data[col])}).reset_index()
+
+    aggregated_data = aggregated_data.rename(columns={'Appts': 'Appointments, "Number_of_reports__Salesforce_Reports" : "Leads"})
+    aggregated_data['CPL'] = aggregated_data['Cost']/aggregated_data['Leads']
+    aggregated_data['CPA'] = aggregated_data['Cost']/aggregated_data['Appointments']
     
     with bottom_left_column:
         #Map showing leads by state
