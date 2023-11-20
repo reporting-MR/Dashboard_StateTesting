@@ -315,7 +315,7 @@ def main_dashboard():
     data['State_Abbreviation'] = data['State_Name'].map(state_abbreviations)
     aggregated_data = data.groupby('State_Abbreviation').agg({col: 'sum' for col in data.columns if pd.api.types.is_numeric_dtype(data[col])}).reset_index()
 
-    aggregated_data = aggregated_data.rename(columns={'Appts': 'Appointments, "Number_of_reports__Salesforce_Reports" : "Leads"})
+    aggregated_data = aggregated_data.rename(columns={'Appts': 'Appointments', "Number_of_reports__Salesforce_Reports" : "Leads"})
     aggregated_data['CPL'] = aggregated_data['Cost']/aggregated_data['Leads']
     aggregated_data['CPA'] = aggregated_data['Cost']/aggregated_data['Appointments']
     
