@@ -286,7 +286,24 @@ def main_dashboard():
     with col6:
         st.plotly_chart(fig3, use_container_width=True)
     
-    
+    ## Metric Selector for charts
+    col7, col8 = st.columns(2)
+    selection = 'Appts'
+    options = ["Appointments", "Leads", "DQ", "Cost"]
+    with col7:
+        st.expander("Change Metric"):
+            selection = st.selectbox("Select a metric:", options)
+
+    if selection == 'Appointments':
+        selection = 'Appts'
+
+    if selection == 'Leads':
+        selection = 'Number_of_reports__Salesforce_Reports'
+
+    with col8:
+        st.write("")
+
+        
     ### Bottom Charts ###
     bottom_left_column, bottom_right_column = st.columns(2)
     state_abbreviations = {
@@ -303,13 +320,13 @@ def main_dashboard():
     # Convert full state names in your dataframe to abbreviations
     data['State_Abbreviation'] = data['State_Name'].map(state_abbreviations)
     aggregated_data = data.groupby('State_Abbreviation').agg({'Appts': 'sum'}).reset_index()
-        
+    
     with bottom_left_column:
         #Map showing leads by state
         fig_map = px.choropleth(aggregated_data, 
                         locations='State_Abbreviation', 
                         locationmode='USA-states', 
-                        color='Appts', 
+                        color= selection, 
                         scope='usa', 
                         title='Appts by State',
                         color_continuous_scale='Viridis',
