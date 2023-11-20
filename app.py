@@ -295,7 +295,7 @@ def main_dashboard():
         selection = st.selectbox("Select a metric:", options)
 
     with col8:
-        st.write("")
+        st.write("*Double click on any reason in the legend to filter, single click to filter out")
 
         
     ### Bottom Charts ###
